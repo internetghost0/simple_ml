@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+#define train_count (sizeof(train) / sizeof(train[0]))
+#define TIMES_OF_TRAIN 1500
+
+// our model, [input, output]
 float train[][2] = {
     {0, 0},
     {1, 2},
@@ -10,19 +14,17 @@ float train[][2] = {
     {4, 8},
 };
 
-#define train_count (sizeof(train) / sizeof(train[0]))
-#define TIMES_OF_TRAIN 500
-
 float rand_flost(void) 
 {
     return (float) rand() / (float) RAND_MAX;
 }
 
-float cost(float w) {
+// closer to 0 => model more success
+float cost(float w, float b) {
     float result = 0.0f;
     for (size_t i = 0; i < train_count; i++) {
         float x = train[i][0];
-        float y = x*w;
+        float y = x*w + b;
         float d = y - train[i][1];
         result += d*d;
     }
@@ -34,18 +36,27 @@ int main(void)
 {
     srand(time(0));
 
+    // weight
     float w = rand_flost() * 10.f;
-    
-    float eps = 1e-3;
-    float rate = 1e-3;
+    // bias
+    float b = rand_flost() * 5.f;
 
+    // magic numbers
+    const float eps = 1e-3;
+    const float rate = 1e-3;
+
+    // training
     for (size_t i = 0; i < TIMES_OF_TRAIN; i++) {
-        float dcost = (cost(w + eps) - cost(w)) / eps;
-        printf("result: %f\n", cost(w));
-        w -= rate * dcost;
-        printf("result: %f\n", cost(w));
+        // calculating step of weight
+        float dw = (cost(w + eps, b) - cost(w, b)) / eps;
+        // calculating step of bias
+        float db = (cost(w, b + eps) - cost(w, b)) / eps;
+        // weight - weight_step * k
+        w -= rate * dw;
+        // bias - bias_step * k
+        b -= rate * db;
+        printf("cost: %f, w = %f, b = %f \n", cost(w, b), w, b);
     }
-    printf("%f\n", w);
 
     return 0;
 }
