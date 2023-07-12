@@ -19,7 +19,7 @@ float rand_flost(void)
     return (float) rand() / (float) RAND_MAX;
 }
 
-// closer to 0 => model more success
+// if return value is closer to 0 then params are more correct
 float cost(float w, float b) {
     float result = 0.0f;
     for (size_t i = 0; i < train_count; i++) {
@@ -55,8 +55,10 @@ int main(void)
         w -= rate * dw;
         // bias - bias_step * k
         b -= rate * db;
-        printf("cost: %f, w = %f, b = %f \n", cost(w, b), w, b);
+        printf("try #%zu, cost: %f, w = %f, b = %f \n", i + 1, cost(w, b), w, b);
     }
+    printf("-----------------------------------\n");
+    printf("w = %f, b = %f\n", w, b);
 
     return 0;
 }
