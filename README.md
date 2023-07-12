@@ -1,1 +1,3 @@
-## simple machine learning project (playground)
+## machine learning project (playground)
+
+its simple example, model is just multiplication by 2
